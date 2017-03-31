@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from wechat_sdk.basic import WechatBasic
 
-token = 'xxxxxxx'
+token = 'zhang310'
 
 
 @csrf_exempt
