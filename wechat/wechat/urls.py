@@ -19,5 +19,5 @@ from testpic.views import test,home
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^pic/', test),
-    url(r'^wechat/', home),
+    url(r'^', home),
 ]
