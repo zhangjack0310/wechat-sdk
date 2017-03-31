@@ -22,6 +22,7 @@ def home(request):
         else:
             wechat.parse_data(request.body)
             message = wechat.get_message()
+            print message
             rsp = wechat.response_text(u'消息类型: {}'.format(message.type))
     else:
         rsp = wechat.response_text('check error')
@@ -31,6 +32,8 @@ def home(request):
 
 
 def test(request):
+    print request
+    a = request.POST.get()
     print request
     a = {"good":123}
     ret = json.dumps(a)
