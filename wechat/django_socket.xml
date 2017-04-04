@@ -1,5 +1,5 @@
 <uwsgi>
-    <socket>:8077</socket>
+    <socket>:80</socket>
     <chdir>/www/wechat-sdk/wechat</chdir>
     <module>django_uwsgi</module>
     <processes>4</processes> <!-- 进程数 -->
