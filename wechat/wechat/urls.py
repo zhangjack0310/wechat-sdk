@@ -15,9 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from testpic.views import test,home
+from testpic.views import opposite_pic
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'^pic/', test),
-    url(r'^', home),
+    url(r'^', opposite_pic),
 ]

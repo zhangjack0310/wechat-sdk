@@ -4,10 +4,7 @@ from django.http import HttpResponse,JsonResponse
 import json
 import time
 from PIL import Image
-
-
 from django.views.decorators.csrf import csrf_exempt
-
 from wechat_sdk.basic import WechatBasic
 from wechat_sdk.messages import TextMessage, VoiceMessage, ImageMessage, VideoMessage, LinkMessage, LocationMessage
 import requests
@@ -16,9 +13,6 @@ from os.path import dirname
 from wechat_sdk import WechatBasic
 dirn = dirname(__file__)
 
-
-#zhanggengid:  wx9e08f08dcf4dae91
-#secret :  40ca19f92fad40425288fa377d1e2f3e
 
 def deal_pic(url):
     dirn = dirname(__file__)
@@ -36,13 +30,8 @@ def deal_pic(url):
     return outpath
 
 token = 'zhang310'
-
-
-
-
-
 @csrf_exempt
-def home(request):
+def opposite_pic(request):
     wechat = WechatBasic(token=token)
     if wechat.check_signature(signature=request.GET['signature'],
                               timestamp=request.GET['timestamp'],
@@ -58,7 +47,7 @@ def home(request):
                     pid = message.media_id
                     picurl = message.picurl
                     path = deal_pic(picurl)
-                    with open (path,"r") as f:
+                    with open(path,"r") as f:
                         res = WechatBasic(appid='wx9e08f08dcf4dae91', appsecret='40ca19f92fad40425288fa377d1e2f3e').upload_media(media_type='image', media_file=f)
                         print res
                         f.close()
@@ -83,11 +72,3 @@ def home(request):
 
 
 
-
-def test(request):
-    print request
-    a = request.POST.get()
-    print request
-    a = {"good":123}
-    ret = json.dumps(a)
-    return JsonResponse(a)
