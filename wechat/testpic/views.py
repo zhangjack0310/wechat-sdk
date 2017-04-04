@@ -16,46 +16,26 @@ from os.path import dirname
 from wechat_sdk import WechatBasic
 dirn = dirname(__file__)
 
-def deal_pic():
-    dirn = dirname(__file__)
-    print dirn
-    with open("%s/1314.jpg"%dirn,'w') as f:
-        a = requests.get('http://mmbiz.qpic.cn/mmbiz_jpg/l45ibT5PYBP7evNSRwmia0dom5HUY2HrJ4SXkFH7PykKF68mAxrIbibFVzVrFJUbKW4skLVPQQiaDYZy8Ee0CEP4lQ/0')
 
+#zhanggengid:  wx9e08f08dcf4dae91
+#secret :  40ca19f92fad40425288fa377d1e2f3e
+
+def deal_pic(url):
+    dirn = dirname(__file__)
+    path = "%s/temp.jpg"%dirn
+    outpath = "%s/out.jpg"%dirn
+    print dirn
+    with open(path,'w') as f:
+        a = requests.get(url)
         f.write(a.content)
         f.close()
+    im = Image.open(path)
+    out = im.transpose(Image.FLIP_LEFT_RIGHT)
+    out.save(outpath)
+    os.popen('rm %s'%path)
+    return outpath
 
 token = 'zhang310'
-
-class Msg(object):
-    def __init__(self, xmlData):
-        self.ToUserName = xmlData.find('ToUserName').text
-        self.FromUserName = xmlData.find('FromUserName').text
-        self.CreateTime = xmlData.find('CreateTime').text
-        self.MsgType = xmlData.find('MsgType').text
-        self.MsgId = xmlData.find('MsgId').text
-
-
-class ImageMsg(Msg):
-    def __init__(self, toUserName, fromUserName, mediaId):
-        self.__dict = dict()
-        self.__dict['ToUserName'] = toUserName
-        self.__dict['FromUserName'] = fromUserName
-        self.__dict['CreateTime'] = int(time.time())
-        self.__dict['MediaId'] = mediaId
-    def send(self):
-        XmlForm = """
-        <xml>
-        <ToUserName><![CDATA[{ToUserName}]]></ToUserName>
-        <FromUserName><![CDATA[{FromUserName}]]></FromUserName>
-        <CreateTime>{CreateTime}</CreateTime>
-        <MsgType><![CDATA[image]]></MsgType>
-        <Image>
-        <MediaId><![CDATA[{MediaId}]]></MediaId>
-        </Image>
-        </xml>
-        """
-        return XmlForm.format(**self.__dict)
 
 
 
@@ -72,24 +52,23 @@ def home(request):
         else:
             wechat.parse_data(request.body)
             message = wechat.get_message()
-            print dir(message)
-            t =  message.source
-            print t
-            pid = message.media_id
-            print pid
-            print message.picurl
-            deal_pic()
             try:
                 if isinstance(message, ImageMessage):
-                    path = "%s/1314.jpg" % dirn
+                    t = message.source
+                    pid = message.media_id
+                    picurl = message.picurl
+                    path = deal_pic(picurl)
                     with open (path,"r") as f:
-                        print 111,WechatBasic(appid='wxf7351e88c4bffc0f',appsecret='60ca3e67fedfdbc127f23c980fe0acb3').upload_media(media_type='image', media_file=f)
-                    rsp = wechat.response_image(pid)
-                    # im = Image.open(message.raw)
-                    # out = im.transpose(Image.FLIP_LEFT_RIGHT)
-                    # print "here"
-                    # rsp = wechat.response_image(out)
-                    # print "rsp", rsp
+                        res = WechatBasic(appid='wx9e08f08dcf4dae91', appsecret='40ca19f92fad40425288fa377d1e2f3e').upload_media(media_type='image', media_file=f)
+                        print res
+                        f.close()
+                        os.popen('rm %s'%path)
+                    if res.get('media_id'):
+                        media_id = res.get('media_id')
+                        print media_id
+                        rsp = wechat.response_image(media_id)
+                    else:
+                        rsp = wechat.response_text(u'Something wrong,we are working on it!')
                 else:
                     content = message.content
                     print content
